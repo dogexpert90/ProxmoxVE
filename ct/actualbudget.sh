@@ -108,7 +108,7 @@ EOF
     else
         msg_ok "No update required. ${APP} is already at ${RELEASE}"
     fi
-    exit 0
+    exit
 }
 
 start
