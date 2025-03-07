@@ -40,7 +40,7 @@ function update_script() {
         wget -q https://github.com/actualbudget/actual/archive/refs/tags/v${RELEASE}.tar.gz
 
         mv /opt/actualbudget /opt/actualbudget_bak
-        $STD tar -xzf "v${RELEASE}.tar.gz"
+        tar -xzf "v${RELEASE}.tar.gz"
         mv actual-${RELEASE} /opt/actualbudget
 
         mkdir -p /opt/actualbudget-data/{server-files,upload,migrate,user-files,migrations,config}
