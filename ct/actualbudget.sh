@@ -26,11 +26,10 @@ function update_script() {
 
     if [[ ! -d /opt/actualbudget ]]; then
         msg_error "No ${APP} Installation Found!"
-        exit 1
-        
-    RELEASE=$(curl -s https://api.github.com/repos/actualbudget/actual/releases/latest | \
-              grep "tag_name" | awk -F '"' '{print substr($4, 2)}')
+        exit
+    fi
 
+    RELEASE=$(curl -s https://api.github.com/repos/actualbudget/actual/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4) }')
     if [[ ! -f /opt/actualbudget_version.txt ]] || [[ "${RELEASE}" != "$(cat /opt/actualbudget_version.txt)" ]]; then
         msg_info "Stopping ${APP}"
         systemctl stop actualbudget
@@ -61,7 +60,7 @@ function update_script() {
         if [[ -f /opt/actualbudget_bak/.env ]]; then
             mv /opt/actualbudget_bak/.env /opt/actualbudget-data/.env
         else
-            cat <<EOF > /opt/actualbudget-data/.env
+            cat <<EOF >/opt/actualbudget-data/.env
 ACTUAL_UPLOAD_DIR=/opt/actualbudget-data/upload
 ACTUAL_DATA_DIR=/opt/actualbudget-data
 ACTUAL_SERVER_FILES_DIR=/opt/actualbudget-data/server-files
@@ -74,11 +73,11 @@ EOF
         fi
         cd /opt/actualbudget
         $STD yarn workspaces focus @actual-app/sync-server --production
-        echo "${RELEASE}" > /opt/actualbudget_version.txt
+        echo "${RELEASE}" >/opt/actualbudget_version.txt
         msg_ok "Updated ${APP}"
 
         msg_info "Starting ${APP}"
-        cat <<EOF > /etc/systemd/system/actualbudget.service
+        cat <<EOF >/etc/systemd/system/actualbudget.service
 [Unit]
 Description=Actual Budget Service
 After=network.target
